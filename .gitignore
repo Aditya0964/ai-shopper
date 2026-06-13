@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# ML models
+*.pkl
+*.joblib
+
+# ChromaDB local data
+chroma_db/
+
+# Node
+node_modules/
+dist/
+.next/
