@@ -27,14 +27,16 @@ def create_category(
     return created
 
 
-@router.get("/", response_model=List[ProductResponse])
+@router.get("/")
 def get_products(
     category_id: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
+    page: int = 1,
+    limit: int = 20,
     db: Session = Depends(get_db)
 ):
-    return product_service.get_all_products(db, category_id, min_price, max_price)
+    return product_service.get_all_products(db, category_id, min_price, max_price, page, limit)
 
 
 @router.get("/{product_id}", response_model=ProductResponse)

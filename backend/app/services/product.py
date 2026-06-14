@@ -72,3 +72,23 @@ def delete_product(db: Session, product_id: str):
     product.is_active = False
     db.commit()
     return product
+
+def get_all_products(db: Session, category_id: str = None, min_price: float = None, max_price: float = None, page: int = 1, limit: int = 20):
+    query = db.query(Product).filter(Product.is_active == True)
+    if category_id:
+        query = query.filter(Product.category_id == category_id)
+    if min_price is not None:
+        query = query.filter(Product.price >= min_price)
+    if max_price is not None:
+        query = query.filter(Product.price <= max_price)
+    
+    total = query.count()
+    products = query.offset((page - 1) * limit).limit(limit).all()
+    
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit,
+        "products": products
+    }
