@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, product, cart, order
+from app.routers import auth, product, cart, order, chat
 
 app = FastAPI(title="AI Shopper API", version="1.0.0")
 
@@ -17,6 +17,7 @@ app.include_router(product.router)
 app.include_router(product.category_router)
 app.include_router(cart.router)
 app.include_router(order.router)
+app.include_router(chat.router)
 
 
 @app.get("/")
