@@ -79,3 +79,9 @@ def delete_product(
     if not deleted:
         raise HTTPException(status_code=404, detail="Product not found")
     return {"message": "Product deactivated successfully"}
+
+@router.get("/{product_id}/reviews")
+def get_reviews(product_id: str, db: Session = Depends(get_db)):
+    from app.models.order import Review
+    reviews = db.query(Review).filter(Review.product_id == product_id).all()
+    return reviews

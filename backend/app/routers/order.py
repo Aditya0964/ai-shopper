@@ -20,12 +20,34 @@ def place_order(
     return order
 
 
-@router.get("/", response_model=List[OrderResponse])
+@router.get("/", )
 def get_my_orders(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    return order_service.get_user_orders(db, current_user.id)
+    orders = order_service.get_user_orders(db, current_user.id)
+    result = []
+    for order in orders:
+        order_dict = {
+            "id": order.id,
+            "user_id": order.user_id,
+            "status": order.status,
+            "total_amount": order.total_amount,
+            "payment_id": order.payment_id,
+            "created_at": str(order.created_at),
+            "order_items": [
+                {
+                    "id": item.id,
+                    "product_id": item.product_id,
+                    "product_name": item.product.name if item.product else item.product_id,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price
+                }
+                for item in order.order_items
+            ]
+        }
+        result.append(order_dict)
+    return result
 
 
 @router.get("/{order_id}", response_model=OrderResponse)

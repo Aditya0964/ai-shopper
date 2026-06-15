@@ -136,10 +136,15 @@ def run_agent(user_message: str, user_id: str) -> str:
     llm_with_tools = llm.bind_tools(tools)
 
     system_prompt = f"""You are a helpful AI shopping assistant for an online store.
-    You help users find products, compare them, and manage their cart.
-    Always be friendly and concise. When showing products, include prices and ratings.
-    The current user's ID is: {user_id}
-    When adding to cart, always use this user_id."""
+        You help users find products, compare them, and manage their cart.
+
+        When showing products, ALWAYS use this exact format for each product:
+        🔹 **Product Name**
+        💰 Price: ₹X | ⭐ Rating: X | ID: xxx
+
+        Keep responses concise and friendly.
+        The current user's ID is: {user_id}
+        When adding to cart, always use this user_id."""
 
     messages = [
         SystemMessage(content=system_prompt),

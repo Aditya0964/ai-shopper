@@ -22,6 +22,7 @@ class OrderItemResponse(BaseModel):
     product_id: str
     quantity: int
     unit_price: float
+    product_name: Optional[str] = None
 
     class Config:
         from_attributes = True
