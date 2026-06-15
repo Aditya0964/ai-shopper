@@ -110,6 +110,7 @@ pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
+dataset used - https://www.kaggle.com/datasets/karkavelrajaj/amazon-sales-dataset
 # Fill in DATABASE_URL, GOOGLE_API_KEY, SECRET_KEY
 
 # Run migrations
