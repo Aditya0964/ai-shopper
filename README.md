@@ -26,10 +26,6 @@ Some of the items may not have working image url, so the product image might not
 - **Floating chat widget** — available on every page when logged in
 - Agent can take actions: "add the cheapest one to my cart" actually adds it
 
-### 📊 ML
-- Sentiment analysis scores on product reviews (scikit-learn)
-- Review sentiment stored in database and displayed on product pages
-
 ---
 
 ## 🏗️ Architecture
