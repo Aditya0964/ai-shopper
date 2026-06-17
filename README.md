@@ -2,8 +2,6 @@
 
 A full-stack e-commerce web app with an intelligent shopping assistant powered by RAG, LangChain, and Google Gemini. Users can browse 1300+ real products, manage their cart and orders, and interact with an AI agent that understands natural language to find products, compare items, and add to cart automatically.
 
-Some of the items may not have working image url, so the product image might not be there.
-
 ---
 
 ## 🚀 Live Demo
