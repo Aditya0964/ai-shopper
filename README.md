@@ -1,10 +1,13 @@
 # 🛍️ AI Shopper — AI-Powered Personal Shopping Assistant
 
-A full-stack e-commerce web app with an intelligent shopping assistant powered by RAG, LangChain, and Google Gemini. Users can browse 1300+ real products, manage their cart and orders, and interact with an AI agent that understands natural language to find products, compare items, and add to cart automatically.
+A full-stack e-commerce web app with an intelligent shopping assistant powered by RAG, LangChain, and Groq's Llama 3.3. Users can browse 1300+ real products, manage their cart and orders, and interact with an AI agent that understands natural language to find products, compare items, and add to cart automatically.
 
 ---
 
 ## 🚀 Live Demo
+
+- **Frontend:** [ai-shopper-iota.vercel.app](https://ai-shopper-iota.vercel.app)
+- **Backend API:** [ai-shopper.onrender.com](https://ai-shopper.onrender.com)
 
 ---
 
@@ -12,7 +15,7 @@ A full-stack e-commerce web app with an intelligent shopping assistant powered b
 
 ### 🛒 Core E-commerce
 - User authentication with JWT (register, login, protected routes)
-- Browse 1338+ real Amazon products across 9 categories
+- Browse 1370+ real Amazon products across 9 categories
 - Product detail pages with reviews and ratings
 - Cart management (add, update quantity, remove)
 - Order placement with automatic stock management
@@ -23,15 +26,16 @@ A full-stack e-commerce web app with an intelligent shopping assistant powered b
 - **LangChain agent** with 5 tools: search, filter, get details, compare, add to cart
 - **Floating chat widget** — available on every page when logged in
 - Agent can take actions: "add the cheapest one to my cart" actually adds it
+- Powered by Groq's Llama 3.3 70B for fast, reliable tool-calling
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-Frontend (React + Vite + Tailwind)
+Frontend (React + Vite + Tailwind) — deployed on Vercel
          ↓ REST API
-Backend (FastAPI + Python)
+Backend (FastAPI + Python) — deployed on Render
     ├── Auth service (JWT)
     ├── Product service
     ├── Cart service
@@ -39,10 +43,10 @@ Backend (FastAPI + Python)
     └── AI layer
          ├── RAG pipeline (LangChain + ChromaDB)
          ├── LangChain agent (tool calling)
-         └── Google Gemini 2.5 Flash
+         └── Groq (Llama 3.3 70B)
          ↓
 Data Layer
-    ├── MySQL (users, products, orders, reviews)
+    ├── MySQL — Aiven (users, products, orders, reviews)
     ├── ChromaDB (product embeddings)
     └── SQLAlchemy ORM + Alembic migrations
 ```
@@ -55,11 +59,11 @@ Data Layer
 |---|---|
 | Frontend | React, Vite, Tailwind CSS, Zustand, React Router |
 | Backend | FastAPI, Python, SQLAlchemy, Alembic |
-| Database | MySQL, ChromaDB |
-| AI/LLM | Google Gemini 2.5 Flash, LangChain |
+| Database | MySQL (Aiven), ChromaDB |
+| AI/LLM | Groq (Llama 3.3 70B), LangChain |
 | RAG | sentence-transformers (all-MiniLM-L6-v2), ChromaDB |
-| ML | scikit-learn (sentiment analysis) |
 | Auth | JWT, OAuth2 |
+| Deployment | Vercel (frontend), Render (backend), Aiven (database) |
 
 ---
 
@@ -76,6 +80,7 @@ ai-shopper/
 │   │   ├── services/    # Business logic
 │   │   └── main.py
 │   ├── alembic/         # DB migrations
+│   ├── chroma_db/       # Pre-embedded product vectors
 │   └── requirements.txt
 └── frontend/
     └── src/
@@ -92,7 +97,7 @@ ai-shopper/
 ### Prerequisites
 - Python 3.11+
 - Node.js 20+
-- MySQL 8.0+
+- MySQL 8.0+ (or an Aiven/cloud MySQL instance)
 
 ### Backend
 
@@ -104,8 +109,7 @@ pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-dataset used - https://www.kaggle.com/datasets/karkavelrajaj/amazon-sales-dataset
-# Fill in DATABASE_URL, GOOGLE_API_KEY, SECRET_KEY
+# Fill in DATABASE_URL, GROQ_API_KEY, SECRET_KEY
 
 # Run migrations
 alembic upgrade head
@@ -136,11 +140,15 @@ npm run dev
 |---|---|---|
 | POST | /auth/register | Create account |
 | POST | /auth/login | Login, get JWT |
+| GET | /auth/me | Get current user |
 | GET | /products/ | List products (paginated, filterable) |
 | GET | /products/{id} | Product detail |
+| GET | /products/{id}/reviews | Product reviews |
 | GET | /categories/ | All categories |
 | GET | /cart/ | Get cart |
 | POST | /cart/ | Add to cart |
+| PUT | /cart/{id} | Update cart item quantity |
+| DELETE | /cart/{id} | Remove cart item |
 | POST | /orders/ | Place order |
 | GET | /orders/ | Order history |
 | POST | /chat/ | AI chat (natural language) |
@@ -150,10 +158,19 @@ npm run dev
 ## 🧠 How the AI Works
 
 1. User types a natural language message in the chat widget
-2. LangChain agent (powered by Gemini 2.5 Flash) decides which tools to call
+2. LangChain agent (powered by Groq's Llama 3.3 70B) decides which tools to call
 3. `search_products` tool embeds the query and searches ChromaDB semantically
 4. Retrieved products are injected into the LLM prompt as context (RAG)
 5. LLM responds using only real products — no hallucination
 6. Agent can chain tools: search → filter → add to cart in one conversation turn
+
+---
+
+## 🔐 Security Notes
+
+- Passwords, API keys, and database credentials are never committed (`.env` is gitignored)
+- `alembic.ini` (containing DB credentials) is gitignored — use `alembic.ini.example` as a template
+- JWT tokens expire after 24 hours
+- CORS is restricted to known frontend origins
 
 ---
