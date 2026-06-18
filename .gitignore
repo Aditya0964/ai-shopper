@@ -18,7 +18,7 @@ dist/
 *.joblib
 
 # ChromaDB local data
-chroma_db/
+#chroma_db/
 
 # Node
 node_modules/

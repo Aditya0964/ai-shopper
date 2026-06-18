@@ -1,7 +1,7 @@
 import os
 import uuid
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage, SystemMessage
 from app.ai.rag import search_products_rag
@@ -13,9 +13,9 @@ load_dotenv()
 
 
 def get_llm():
-    return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
-        google_api_key=os.getenv("GOOGLE_API_KEY"),
+    return ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.3
     )
 
@@ -104,8 +104,7 @@ def add_to_cart(product_id: str, user_id: str, quantity: int = 1) -> str:
         return f"Successfully added {quantity}x '{product.name[:50]}' to cart!"
     finally:
         db.close()
-
-
+        
 @tool
 def compare_products(product_id_1: str, product_id_2: str) -> str:
     """Compare two products side by side."""
