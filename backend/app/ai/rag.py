@@ -3,13 +3,18 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 CHROMA_PATH = "chroma_db"
 
+_vectorstore = None
+
 def get_vectorstore():
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    return Chroma(
-        collection_name="products",
-        embedding_function=embeddings,
-        persist_directory=CHROMA_PATH
-    )
+    global _vectorstore
+    if _vectorstore is None:
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        _vectorstore = Chroma(
+            collection_name="products",
+            embedding_function=embeddings,
+            persist_directory=CHROMA_PATH
+        )
+    return _vectorstore
 
 def search_products_rag(query: str, k: int = 5) -> list:
     vectorstore = get_vectorstore()
