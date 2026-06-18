@@ -4,17 +4,26 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.database import SessionLocal
 from app.models.product import Product
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
+import chromadb
+from chromadb.utils import embedding_functions
 
 CHROMA_PATH = "chroma_db"
 
-def get_embedding_model():
-    return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-
 def ingest_products():
-    print("Loading embedding model...")
-    embeddings = get_embedding_model()
+    print("Setting up ChromaDB client...")
+    client = chromadb.PersistentClient(path=CHROMA_PATH)
+    embedding_function = embedding_functions.DefaultEmbeddingFunction()
+
+    try:
+        client.delete_collection("products")
+        print("Deleted old collection")
+    except Exception:
+        pass
+
+    collection = client.create_collection(
+        name="products",
+        embedding_function=embedding_function
+    )
 
     print("Fetching products from MySQL...")
     db = SessionLocal()
@@ -29,7 +38,7 @@ def ingest_products():
 
     for product in products:
         text = f"""Product: {product.name}
-Price: ₹{product.price}
+Price: Rs.{product.price}
 Rating: {product.avg_rating}
 Description: {product.description or 'No description available'}"""
 
@@ -44,19 +53,13 @@ Description: {product.description or 'No description available'}"""
         ids.append(product.id)
 
     print("Embedding and storing in ChromaDB...")
-    vectorstore = Chroma(
-        collection_name="products",
-        embedding_function=embeddings,
-        persist_directory=CHROMA_PATH
-    )
-
     batch_size = 100
     for i in range(0, len(texts), batch_size):
         batch_texts = texts[i:i+batch_size]
         batch_meta = metadatas[i:i+batch_size]
         batch_ids = ids[i:i+batch_size]
-        vectorstore.add_texts(
-            texts=batch_texts,
+        collection.add(
+            documents=batch_texts,
             metadatas=batch_meta,
             ids=batch_ids
         )

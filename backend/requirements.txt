@@ -51,10 +51,8 @@ jsonschema-specifications==2025.9.1
 kubernetes==36.0.2
 langchain==1.3.9
 langchain-anthropic==1.4.6
-langchain-chroma==1.1.0
 langchain-core==1.4.7
 langchain-groq==1.1.3
-langchain-huggingface==1.2.2
 langchain-protocol==0.0.17
 langgraph==1.2.5
 langgraph-checkpoint==4.1.1
@@ -113,7 +111,6 @@ rsa==4.9.1
 safetensors==0.8.0
 scikit-learn==1.9.0
 scipy==1.17.1
-sentence-transformers==5.5.1
 shellingham==1.5.4
 six==1.17.0
 sniffio==1.3.1
@@ -123,7 +120,6 @@ sympy==1.14.0
 tenacity==9.1.4
 threadpoolctl==3.6.0
 tokenizers==0.22.2
-torch==2.12.0
 tqdm==4.68.2
 transformers==5.12.0
 typer==0.25.1
